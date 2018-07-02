@@ -1,7 +1,38 @@
 # react-contextifier
 react-contextifier is a wrapper of the react context api.
 Its main purpose is to reduce the verbosity and the frictions encountered when managing contexts
-## Exemple
+## Exemples
+
+### Simple context
+
+```javascript
+  import { createContext, Provider, Consumer } from 'react-contextifier'
+
+  createContext('user')
+
+  const User () => (
+  <Provider context="user" value={{ name: 'John' }}>
+    <Profile />
+  </Provider>
+)
+
+  const Profile = () => (
+    <Consumer context="user">{({ name }) => <div>{name}</div>}</Consumer>
+  )
+```
+
+### With HOC
+```javascript
+  import { subscribe } from 'react-contextifier'
+
+  const Profile = ({ name }) => (
+    <div>{name}</div>
+  )
+
+  export default subscribe({ user: ({ name }) => ({ name })})
+```
+
+### Multiple context
 **contexts.js**
 ```javascript
 import { createContext } from 'react-contextifier'
@@ -11,54 +42,34 @@ createContext('todos')
 ```
 **User.js**
 ```javascript
-import  { Provide }  from  'react-contextifier'
+import  { Provider }  from  'react-contextifier'
 
-class User {
-  state = {
-    name: 'John'
-  }
-
-  render () {
-    return (
-      <Provide context="user" value={this.state}>
-        <Missions />
-      </Provide>
-    )
-  }
-}
+const User = () => (
+  <Provider context="user" value={{ name: "John" }}>
+    <Missions />
+  </Provider>
+)
 ```
 
 **Missions.js**
 ```javascript
-import  { Provide }  from  'react-contextifier'
+import  { Provider }  from  'react-contextifier'
 
-class Missions {
-  addMission = mission =>
-    this.setState(({ missions }) => ({ missions: [...missions, mission] }));
-
-  state = {
-    list: [],
-    addMission: this.addMission
-  };
-
-  render() {
-    return (
-      <Provide context="missions" value={this.state}>
-        <Missions />
-      </Provide>
-    );
-  }
-}
+const Missions = () => (
+  <Provider context="missions" value={{ list: [] }}>
+    <Missions />
+  </Provider>
+);
 ```
 **Profile.js**
 ```javascript
 import { subscribe } from 'react-contextifier'
 
-const Profile = ({ userName, missions, addMission }) => (...)
+const Profile = ({ userName, missions }) => (...)
 
 const mapContextsToProps = {
   user: ({ name }) => ({ userName: name }),
-  missions: ({ list, addMission }) => ({ mission: list, addMission })
+  missions: ({ list }) => ({ mission: list })
 }
 
 export default subscribe(mapContextsToProps)(Profile)
