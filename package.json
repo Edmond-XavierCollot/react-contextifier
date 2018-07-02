@@ -1,5 +1,5 @@
 {
-  "name": "Contextifier",
+  "name": "react-contextifier",
   "version": "0.0.1",
   "description": "React utilities to simplify react-context utilisation",
   "main": "build/index.js",
