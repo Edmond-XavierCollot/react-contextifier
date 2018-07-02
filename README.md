@@ -1,6 +1,17 @@
 # react-contextifier
 react-contextifier is a wrapper of the react context api.
 Its main purpose is to reduce the verbosity and the frictions encountered when managing contexts
+## Installation
+Using Yarn:
+```shell
+yarn install react-contextifier
+```
+
+Using npm:
+```shell
+npm install --save react-contextifier
+```
+
 ## Exemples
 
 ### Simple context
