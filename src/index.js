@@ -27,11 +27,17 @@ class Contextifier {
 
 const contextifier = new Contextifier();
 
-// Wrapper who import the corresponding React context "Provider"
-export const Provide = ({ children, context, value }) => {
-  const Provider = contextifier.getContext(context).Provider;
-  return <Provider value={value}>{children}</Provider>;
+// Wrapper of "Provider" that inject the corresponding context
+export const Provider = ({ children, context, value }) => {
+  const OriginalProvider = contextifier.getContext(context).Provider;
+  return <OriginalProvider value={value}>{children}</OriginalProvider>;
 };
+
+// Wrapper of "Consumer" that inject the corresponding context
+export const Consumer = ({ children, context }) => {
+  const OriginalConsumer = contextifier.getContext(context).Consumer;
+  return <OriginalConsumer>{(context) => children(context)}</OriginalConsumer>
+}
 
 // [Recursive] Apply multiples context "Consumer" to a Component and pass all merge props
 const passContext = (contexts, Component, props = {}) => {

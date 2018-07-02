@@ -6,30 +6,30 @@ Its main purpose is to reduce the verbosity and the frictions encountered when m
 ### Simple context
 
 ```javascript
-  import { createContext, Provider, Consumer } from 'react-contextifier'
+import { createContext, Provider, Consumer } from 'react-contextifier'
 
-  createContext('user')
+createContext('user')
 
-  const User () => (
+const User () => (
   <Provider context="user" value={{ name: 'John' }}>
     <Profile />
   </Provider>
 )
 
-  const Profile = () => (
-    <Consumer context="user">{({ name }) => <div>{name}</div>}</Consumer>
-  )
+const Profile = () => (
+  <Consumer context="user">{({ name }) => <div>{name}</div>}</Consumer>
+)
 ```
 
 ### With HOC
 ```javascript
-  import { subscribe } from 'react-contextifier'
+import { subscribe } from 'react-contextifier'
 
-  const Profile = ({ name }) => (
-    <div>{name}</div>
-  )
+const Profile = ({ name }) => (
+  <div>{name}</div>
+)
 
-  export default subscribe({ user: ({ name }) => ({ name })})
+export default subscribe({ user: ({ name }) => ({ name })})
 ```
 
 ### Multiple context
