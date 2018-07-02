@@ -1,8 +1,9 @@
 import React, { createContext as reactCreateContext } from "react";
 
-class Contextify {
+class Contextifier {
 	contexts = [];
 
+  // Create and store context
 	createContext = (name, initialValue) => {
 		const NewContext = reactCreateContext(initialValue);
 		this.contexts.push({
@@ -13,21 +14,25 @@ class Contextify {
 		});
 	};
 
+  // Get a created context from the store
 	getContext = (name) => this.contexts.find((c) => c.name === name);
 
+  // Map the keys of the object passed to the "subscribe" method and return all needed contexts
 	getContexts = (requiredContexts) => Object.entries(requiredContexts).map((context) => ({
 			...this.getContext(context[0]),
 			mapContext: context[1]
 		}));
 }
 
-const contextify = new Contextify()
+const contextifier = new Contextifier()
 
-export const Provide = ({ children, name, value }) => {
-	const Provider = contextify.getContext(name).Provider;
+// Wrapper who import the corresponding React context "Provider"
+export const Provide = ({ children, context, value }) => {
+	const Provider = contextifier.getContext(context).Provider;
 	return <Provider value={value}>{children}</Provider>;
 };
 
+// [Recursive] Apply multiples context "Consumer" to a Component and pass all merge props
 const passContext = (contexts, Component, props = {}) => {
 	const context = contexts[0];
 	const Consumer = context.Consumer;
@@ -51,8 +56,9 @@ const passContext = (contexts, Component, props = {}) => {
 	);
 };
 
+// HOC to enhance a Component with the corresponding context
 export const withContext = (name, mapContext) => (Component) => (props) => {
-	const Consumer = contextify.getContext(name).Consumer;
+	const Consumer = contextifier.getContext(name).Consumer;
 	return (
 		<Consumer>
 			{(context) => <Component {...mapContext(context)} {...props} />}
@@ -60,9 +66,11 @@ export const withContext = (name, mapContext) => (Component) => (props) => {
 	);
 };
 
-export const withContexts = (requiredContexts) => (Component) => (props) => {
-	const contexts = contextify.getContexts(requiredContexts);
+// Same as "withContext" but for multiples contexts
+export const subscribe = (requiredContexts) => (Component) => (props) => {
+	const contexts = contextifier.getContexts(requiredContexts);
 	return passContext(contexts, Component, props);
 };
 
-export const createContext = contextify.createContext
+export const createContext = contextifier.createContext
+export const getContext = contextifier.getContext
