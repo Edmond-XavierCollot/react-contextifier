@@ -40,7 +40,9 @@ const Profile = ({ name }) => (
   <div>{name}</div>
 )
 
-export default subscribe({ user: ({ name }) => ({ name })})
+export default subscribe({
+  user: ({ name }) => ({ name })
+})(Profile)
 ```
 
 ### Multiple context
