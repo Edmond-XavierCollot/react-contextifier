@@ -1,4 +1,4 @@
-import React, { createContext as reactCreateContext } from "react";
+import React, { createContext as reactCreateContext } from 'react';
 
 class Contextifier {
   contexts = [];
@@ -10,34 +10,43 @@ class Contextifier {
       name,
       Context: NewContext,
       Consumer: NewContext.Consumer,
-      Provider: NewContext.Provider
+      Provider: NewContext.Provider,
     });
   };
 
+  // Register custom provider
+  registerProvider = (name, CustomProvider) => {
+    this.contexts = this.contexts.map(context =>
+      context.name === name ? { ...context, CustomProvider } : context
+    );
+  };
+
   // Get a created context from the store
-  getContext = name => this.contexts.find(c => c.name === name);
+  getContext = name => this.contexts.find(context => context.name === name);
 
   // Map the keys of the object passed to the "subscribe" method and return all needed contexts
   getContexts = requiredContexts =>
     Object.entries(requiredContexts).map(context => ({
       ...this.getContext(context[0]),
-      mapContext: context[1]
+      mapContext: context[1],
     }));
 }
 
 const contextifier = new Contextifier();
 
 // Wrapper of "Provider" that inject the corresponding context
-export const Provider = ({ children, context, value }) => {
-  const OriginalProvider = contextifier.getContext(context).Provider;
-  return <OriginalProvider value={value}>{children}</OriginalProvider>;
+export const Provider = ({ children, context, value, ...props }) => {
+  const { CustomProvider, Provider } = contextifier.getContext(context);
+  if (CustomProvider)
+    return <CustomProvider {...props}>{children}</CustomProvider>;
+  return <Provider value={value}>{children}</Provider>;
 };
 
 // Wrapper of "Consumer" that inject the corresponding context
 export const Consumer = ({ children, context }) => {
   const OriginalConsumer = contextifier.getContext(context).Consumer;
-  return <OriginalConsumer>{(context) => children(context)}</OriginalConsumer>
-}
+  return <OriginalConsumer>{context => children(context)}</OriginalConsumer>;
+};
 
 // [Recursive] Apply multiples context "Consumer" to a Component and pass all merge props
 const passContext = (contexts, Component, props = {}) => {
@@ -49,7 +58,7 @@ const passContext = (contexts, Component, props = {}) => {
         {contextState =>
           passContext(contexts.slice(1), Component, {
             ...context.mapContext(contextState),
-            ...props
+            ...props,
           })
         }
       </Consumer>
