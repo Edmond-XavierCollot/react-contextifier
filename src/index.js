@@ -6,12 +6,14 @@ class Contextifier {
   // Create and store context
   createContext = (name, initialValue) => {
     const NewContext = reactCreateContext(initialValue);
-    this.contexts.push({
+    const context = {
       name,
       Context: NewContext,
       Consumer: NewContext.Consumer,
       Provider: NewContext.Provider,
-    });
+    }
+    this.contexts = [...this.contexts, context]
+    return context;
   };
 
   // Register custom provider

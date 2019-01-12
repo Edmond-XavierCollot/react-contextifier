@@ -1,6 +1,6 @@
 {
   "name": "react-contextifier",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Manage context with ease and less verbosity",
   "main": "build/index.js",
   "repository": "git@github.com:Edmond-XavierCollot/react-contextifier.git",
